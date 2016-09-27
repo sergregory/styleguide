@@ -53,6 +53,7 @@ import sys
 import unicodedata
 
 
+_DEBUG = False
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
@@ -5888,11 +5889,12 @@ def ProcessConfigOverrides(filename):
             if base_name:
               pattern = re.compile(val)
               if pattern.match(base_name):
-                sys.stderr.write('Ignoring "%s": file excluded by "%s". '
-                                 'File path component "%s" matches '
-                                 'pattern "%s"\n' %
-                                 (filename, cfg_file, base_name, val))
-                return False
+                  if _DEBUG == True:
+                      sys.stderr.write('Ignoring "%s": file excluded by "%s". '
+                                       'File path component "%s" matches '
+                                       'pattern "%s"\n' %
+                                       (filename, cfg_file, base_name, val))
+                  return False
           elif name == 'linelength':
             global _line_length
             try:
@@ -6115,7 +6117,8 @@ def main():
     ProcessFile(filename, _cpplint_state.verbose_level)
   _cpplint_state.PrintErrorCounts()
 
-  sys.exit(_cpplint_state.error_count > 0)
+  if _DEBUG == True:
+    sys.exit(_cpplint_state.error_count > 0)
 
 
 if __name__ == '__main__':
